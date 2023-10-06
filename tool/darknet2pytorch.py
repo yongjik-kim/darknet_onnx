@@ -347,11 +347,11 @@ class Darknet(nn.Module):
                         prev_filters = out_filters[layers[0]] // int(block['groups'])
                         prev_stride = out_strides[layers[0]] // int(block['groups'])
                 elif len(layers) == 2:
-                    assert (layers[0] == ind - 1 or layers[1] == ind - 1)
+                    assert (max(layers) == ind - 1)
                     prev_filters = out_filters[layers[0]] + out_filters[layers[1]]
                     prev_stride = out_strides[layers[0]]
                 elif len(layers) == 4:
-                    assert (layers[0] == ind - 1)
+                    assert (max(layers) == ind - 1)
                     prev_filters = out_filters[layers[0]] + out_filters[layers[1]] + out_filters[layers[2]] + \
                                    out_filters[layers[3]]
                     prev_stride = out_strides[layers[0]]
@@ -416,7 +416,10 @@ class Darknet(nn.Module):
                 yolo_layer.num_anchors = int(block['num'])
                 yolo_layer.anchor_step = len(yolo_layer.anchors) // yolo_layer.num_anchors
                 yolo_layer.stride = prev_stride
-                yolo_layer.scale_x_y = float(block['scale_x_y'])
+                try:
+                    yolo_layer.scale_x_y = float(block['scale_x_y'])
+                except:
+                    yolo_layer.scale_x_y = 1.0
                 # yolo_layer.object_scale = float(block['object_scale'])
                 # yolo_layer.noobject_scale = float(block['noobject_scale'])
                 # yolo_layer.class_scale = float(block['class_scale'])
